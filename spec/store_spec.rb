@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 RSpec.describe 'Testing' do 
   it 'raises error if increases with negative amount' do
-    aggregate_id = Sequent.new_uuid
+    aggregate_id = Store.new_uuid
     expect {
       Store.create_counter(aggregate_id)
     }.to output("CounterCreated\n").to_stdout
@@ -12,7 +12,7 @@ RSpec.describe 'Testing' do
   end
 
   it 'raises error if decreases with negative amount' do
-    aggregate_id = Sequent.new_uuid
+    aggregate_id = Store.new_uuid
     expect {
       Store.create_counter(aggregate_id)
     }.to output("CounterCreated\n").to_stdout
