@@ -51,7 +51,7 @@ module Store
   end
 
   def self.start(env = 'test')
-    Sequent::Support::Database.establish_connection(DB_CONFIG[env])
+    Sequent::Support::Database.establish_connection(ENV['DATABASE_URL'])
   end
 
   def self.event_handlers

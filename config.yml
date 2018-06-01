@@ -1,81 +1,62 @@
-# Ruby CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-ruby/ for more details
-#
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/ruby:2.4.1-node-browsers
+      environment:
+        RAILS_ENV: test
+        PGHOST: 127.0.0.1
+        DATABASE_URL: "postgres://ubuntu@localhost:5432/oferta_test"
+    - image: circleci/postgres:9.4
+      environment:
+        POSTGRES_USER: ubuntu
+        POSTGRES_DB: oferta_test
+
 version: 2
-general:
-  branches:
-    only:
-     - master
-     - develop
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/ruby:2.4.1-node-browsers
-        environment:
-          PG_DB: test_counterdb2
-          PG_HOST: 127.0.0.1
-          PG_USER: macbookpro
-          PG_PASS: Dung123#
-          PG_PORT: 6543
-          RAILS_ENV: test
-          RACK_ENV: test
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: circleci/postgres:9.4
-        environment:
-          POSTGRES_USER: macbookpro
-          POSTGRES_DB: test_counterdb2
-          POSTGRES_PASSWORD: Dung123#
-          POSTGRES_PORT: 6543
-
-    working_directory: ~/repo
-
+  bundle_dependencies:
+    <<: *defaults
     steps:
       - checkout
-
-      # Download and cache dependencies
+      - attach_workspace:
+          at: ~/repo
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run:
-          name: install dependencies
-          command: |
-            gem install bundler
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-
+      - run: bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
-          paths:
-            - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-        
+          paths:
+            - ~/repo/vendor/bundle
+      - persist_to_workspace:
+          root: .
+          paths: vendor/bundle
+
+  rake_test:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run: bundle --path vendor/bundle
+#      - run:
+#          name: Rubocop
+#          command: bin/rubocop --rails
+
       # Database setup
-      - run:
-          name: Set up DB
-          command: |
-            bundle exec rake db:create
-            bundle exec rake db:migrate
-            bundle exec rake view_schema:build
-        
-      # run tests!
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:schema:load
+
       - run:
           name: run tests
           command: |
             mkdir /tmp/test-results
             TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-            
             bundle exec rspec --format progress \
                             --format RspecJunitFormatter \
                             --out /tmp/test-results/rspec.xml \
                             --format progress \
+                            -- \
                             $TEST_FILES
-        
       # collect reports
       - store_test_results:
           path: /tmp/test-results

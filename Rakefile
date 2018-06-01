@@ -10,7 +10,7 @@ begin
   require 'sequent/rake/tasks'
   require_relative 'store'
   Sequent::Rake::Tasks.new({
-    db_config_supplier: Store::DB_CONFIG,
+    db_config_supplier: ENV['DATABASE_URL'],
     view_projection: Store::VIEW_PROJECTION,
     event_store_schema: 'public',
     environment: ENV['RACK_ENV'] || 'development'
