@@ -15,7 +15,7 @@ jobs:
       - image: circleci/ruby:2.4.1-node-browsers
         environment:
           PG_DB: test_counterdb2
-          PG_HOST: localhost
+          PG_HOST: 127.0.0.1
           PG_USER: macbookpro
           PG_PASS: Dung123#
           PG_PORT: 6543
@@ -29,7 +29,7 @@ jobs:
         environment:
           POSTGRES_USER: macbookpro
           POSTGRES_DB: test_counterdb2
-          POSTGRES_PASS: Dung123#
+          POSTGRES_PASSWORD: Dung123#
           POSTGRES_PORT: 6543
 
     working_directory: ~/repo
