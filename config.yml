@@ -14,8 +14,11 @@ jobs:
       # specify the version you desire here
       - image: circleci/ruby:2.4.1-node-browsers
         environment:
+          PG_DB: test_counterdb2
           PG_HOST: localhost
-          PG_USER: ubuntu
+          PG_USER: macbookpro
+          PG_PASS: Dung123#
+          PG_PORT: 6543
           RAILS_ENV: test
           RACK_ENV: test
       
@@ -24,8 +27,10 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: circleci/postgres:9.6
         environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_DB: db_name
+          POSTGRES_USER: macbookpro
+          POSTGRES_DB: test_counterdb2
+          POSTGRES_PASS: Dung123#
+          POSTGRES_PORT: 6543
 
     working_directory: ~/repo
 
@@ -42,6 +47,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            gem install bundler
             bundle install --jobs=4 --retry=3 --path vendor/bundle
 
       - save_cache:
@@ -56,8 +62,7 @@ jobs:
             bundle exec rake db:create
             bundle exec rake db:migrate
             bundle exec rake view_schema:build
-        environment:
-          DATABASE_URL: "postgres://ubuntu@localhost:5432/test_dbcounter2?schema_search_path=public,view_10"
+        
       # run tests!
       - run:
           name: run tests
@@ -70,8 +75,7 @@ jobs:
                             --out /tmp/test-results/rspec.xml \
                             --format progress \
                             $TEST_FILES
-        environment:
-          DATABASE_URL: "postgres://ubuntu@localhost:5432/test_dbcounter2?schema_search_path=public,view_10"
+        
       # collect reports
       - store_test_results:
           path: /tmp/test-results

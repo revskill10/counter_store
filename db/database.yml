@@ -14,6 +14,11 @@ development:
 
 test:
   adapter: postgresql
-  pool: 5
-  url: <%= ENV['DATABASE_URL'] %>
+  host: localhost
+  port: 6543
+  timeout: 5000
+  database: test_counterdb2
+  username: macbookpro
+  password: Dung123#
+  schema_search_path: "public, <%= Store::VIEW_PROJECTION.schema_name %>"
 
