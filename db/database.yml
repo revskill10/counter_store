@@ -13,7 +13,6 @@ development:
   pool: 5
 
 test:
-  <<: *database
   pool: 5
-  database: test_counterdb2
+  url: <%= ENV['DATABASE_URL'] %>
 
