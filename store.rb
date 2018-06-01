@@ -5,6 +5,7 @@ require_relative 'ducks/counter/actions'
 require_relative 'ducks/counter/reducer'
 require_relative 'ducks/registration/actions'
 require_relative 'ducks/registration/reducer'
+require_relative 'ducks/student/reducer'
 require_relative 'subscribers/logger_subscriber'
 
 Sequent.configure do |config|
@@ -13,7 +14,8 @@ Sequent.configure do |config|
   config.event_handlers = [
     CounterRecordEventHandler.new, 
     LoggerSubscriber.new, 
-    RegistrationEventHandler.new
+    RegistrationEventHandler.new,
+    StudentEventHandler.new
   ]
   config.transaction_provider = Sequent::Core::Transactions::ActiveRecordTransactionProvider.new
 end
@@ -22,7 +24,7 @@ module Store
   include CounterActions
   include RegistrationActions
 
-  VERSION = 9
+  VERSION = 10
 
   VIEW_PROJECTION = Sequent::Support::ViewProjection.new(
     name: "view",
@@ -30,7 +32,8 @@ module Store
     definition: "db/view_schema.rb",
     event_handlers: [
       CounterRecordEventHandler.new,
-      RegistrationEventHandler.new
+      RegistrationEventHandler.new,
+      StudentEventHandler.new
     ]
   )
   DB_CONFIG = YAML.load(ERB.new(File.read('db/database.yml')).result)
@@ -47,12 +50,24 @@ module Store
     RegistrationRecord
   end
 
-  def self.start
-    Sequent::Support::Database.establish_connection(DB_CONFIG[ENV["RACK_ENV"]])
+  def self.start(env = 'test')
+    Sequent::Support::Database.establish_connection(DB_CONFIG[env])
   end
 
   def self.event_handlers
     Sequent.configuration.event_handlers
+  end
+
+  def self.command_record
+    Sequent::Core::CommandRecord
+  end
+
+  def self.student_record
+    StudentRecord
+  end
+
+  def self.event_record
+    Sequent::Core::EventRecord
   end
 end
 

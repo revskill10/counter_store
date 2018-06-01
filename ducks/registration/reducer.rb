@@ -12,5 +12,10 @@ class RegistrationEventHandler < Sequent::Core::BaseEventHandler
       parent_id: event.parent_id
     )
   end
-end
 
+  on RegistrationAccepted do |event|
+    update_record(RegistrationRecord, event) do |registration_record|
+      registration_record.status = event.status
+    end
+  end
+end

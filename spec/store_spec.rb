@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-RSpec.describe 'Testing' do 
+RSpec.describe 'Testing Counter' do 
   it 'raises error if increases with negative amount' do
     aggregate_id = Store.new_uuid
     expect {
