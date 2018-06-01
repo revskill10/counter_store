@@ -13,7 +13,7 @@ development:
   pool: 5
 
 test:
-  <<: *database
+  adapter: postgresql
   pool: 5
   url: <%= ENV['DATABASE_URL'] %>
 
