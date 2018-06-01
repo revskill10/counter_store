@@ -30,6 +30,14 @@ module Store
   def self.new_uuid
     Sequent.new_uuid
   end
+
+  def self.counter_record
+    CounterRecord
+  end
+
+  def self.start
+    Sequent::Support::Database.establish_connection(DB_CONFIG[ENV["RACK_ENV"]])
+  end
 end
 
-Sequent::Support::Database.establish_connection(Store::DB_CONFIG[ENV["RACK_ENV"]])
+

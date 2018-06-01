@@ -1,9 +1,13 @@
 class LoggerSubscriber < Sequent::Core::BaseEventHandler
   on CounterCreated do |event|
-    puts "CounterCreated: " + event.to_json
+    puts "CounterCreated"
   end
 
   on CounterIncreased do |event|
-    puts "CounterIncreased: " + event.to_json
+    puts "CounterIncreased"
+  end
+
+  on CounterDecreased do |event|
+    puts "CounterDecreased"
   end
 end
