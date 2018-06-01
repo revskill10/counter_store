@@ -15,8 +15,6 @@ class CounterDecreased < CounterEvent
 end
 
 class Counter < Sequent::Core::AggregateRoot
-  attr_reader :amount 
-
   def initialize(id)
     super(id)
     apply CounterCreated
