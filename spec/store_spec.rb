@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-RSpec.describe 'Testing' do 
+RSpec.describe 'Testing Counter' do 
   it 'raises error if increases with negative amount' do
     aggregate_id = Store.new_uuid
     expect {
@@ -34,9 +34,11 @@ RSpec.describe 'Testing' do
     expect {
       Store.create_counter(aggregate_id)
       Store.increase_counter(aggregate_id, 3)  
-    }.to output("CounterCreated\nCounterIncreased\n").to_stdout
+      Store.increase_counter(aggregate_id, 4)
+      Store.decrease_counter(aggregate_id, 5)
+    }.to output("CounterCreated\nCounterIncreased\nCounterIncreased\nCounterDecreased\n").to_stdout
     
-    expect(Store.counter_record.find_by(aggregate_id: aggregate_id).amount).to eql(3)
+    expect(Store.counter_record.find_by(aggregate_id: aggregate_id).amount).to eql(2)
   end
 
   it 'decreases counter with positive amount' do
