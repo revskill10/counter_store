@@ -2,10 +2,10 @@ require 'sequent'
 require 'sequent/support'
 require 'erb'
 require_relative 'ducks/counter/actions'
-require_relative 'ducks/counter/reducer'
+require_relative 'ducks/counter/projector'
 require_relative 'ducks/registration/actions'
-require_relative 'ducks/registration/reducer'
-require_relative 'ducks/student/reducer'
+require_relative 'ducks/registration/projector'
+require_relative 'ducks/student/projector'
 require_relative 'subscribers/logger_subscriber'
 
 Sequent.configure do |config|
@@ -51,7 +51,7 @@ module Store
   end
 
   def self.start(env = 'test')
-    Sequent::Support::Database.establish_connection(ENV['DATABASE_URL'])
+    Sequent::Support::Database.establish_connection(DB_CONFIG[env])
   end
 
   def self.event_handlers
