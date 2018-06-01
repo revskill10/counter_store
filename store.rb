@@ -38,6 +38,10 @@ module Store
   def self.start
     Sequent::Support::Database.establish_connection(DB_CONFIG[ENV["RACK_ENV"]])
   end
+
+  def self.event_handlers
+    Sequent.configuration.event_handlers
+  end
 end
 
 
