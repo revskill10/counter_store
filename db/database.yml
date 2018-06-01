@@ -1,6 +1,6 @@
 database: &database
   adapter: postgresql
-  host: '127.0.0.1'
+  host: localhost
   port: 6543
   timeout: 5000
   database: counterdb2
